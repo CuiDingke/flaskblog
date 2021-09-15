@@ -1,0 +1,144 @@
+{% extends 'base.html' %}
+{% block title %}
+    用户登录
+{% endblock %}
+{% block styles %}
+    {{ super() }}
+    <style>
+        #container {
+            padding-top: 30px;
+            width: 1000px;
+            height: 600px;
+            margin: 0 auto;
+        }
+
+        #container h1 {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+
+        #container form {
+            margin: 0 auto;
+        }
+
+        #tab {
+            font-size: 20px;
+            text-align: left;
+            padding-left: 170px;
+            margin-bottom: 50px;
+        }
+
+        #tab span {
+            display: inline;
+            width: 120px;
+            text-align: center;
+            cursor: default;
+        }
+
+        #tips {
+            color: red;
+            font-size: 14px;
+        }
+
+        {##container h1#}
+    </style>
+{% endblock %}
+{% block newcontent %}
+    <div id="container">
+        <h1>用户登录</h1>
+        <div id="tab">
+            <span>用户名/密码</span> | <span>手机验证码</span>
+        </div>
+        <div class="logintab">
+            <p id="tips">{{ msg }}</p>
+            <form class="form-horizontal" method="post" action="{{ url_for('user.user_login') }}?f=1">
+                <div class="form-group">
+                    <label for="inputUsername" class="col-md-2 control-label"></label>
+                    <div class="col-md-6">
+                        <input type="text" class="form-control" id="inputUsername" placeholder="username"
+                               name="username">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="inputPassword" class="col-md-2 control-label"></label>
+                    <div class="col-md-6">
+                        <input type="password" class="form-control" id="inputPassword" placeholder="password"
+                               name="password">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-sm-offset-2 col-md-10">
+                        <button type="submit" class="btn btn-primary col-md-3">登&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;录
+                        </button>
+                        <button type="reset" class="btn btn-primary col-md-3">重&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;置
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div class="logintab">
+            <p id="tips">{{ msg }}</p>
+            <form class="form-horizontal" method="post" action="{{ url_for('user.user_login') }}?f=2">
+                <div class="form-group">
+                    <div class="col-md-offset-2 col-md-6 ">
+                        <input type="text" class="form-control" id="inputPhone" placeholder="输入手机号"
+                               name="phone"><span></span>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class=" col-md-offset-2 col-md-4">
+                        <input type="text" class="form-control" id="inputCode" placeholder="输入验证码" name="code">
+                    </div>
+                    <div class="col-md-3">
+                        <input type="button" id="btnCheck" class="btn btn-primary" value="发送验证码">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-md-offset-2 col-md-10">
+                        <button type="submit" class="btn btn-primary col-md-3">登&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;录
+                        </button>
+                        <button type="reset" class="btn btn-primary col-md-3">重&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;置
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+{% endblock %}
+{% block scripts %}
+    {{ super() }}
+    <script>
+        $(function () {
+            // 显示  隐藏 登陆方式  先隐藏 后展示
+            $(".logintab").hide();
+            $(".logintab").first().show();
+            $("#tab span").each(function (i) {
+                $(this).click(function () {
+                    $(".logintab").hide();
+                    $(".logintab").eq(i).show();
+                })
+            })
+        });
+        $("#btnCheck").click(function () {
+            let phone = $('#inputPhone').val();
+            let span_obj = $('#inputPhone').next('span');
+            span_obj.css({'color': 'red', 'font-size': '12px'})
+            if (phone.length == 11) {
+                //发送ajax
+                $.get('{{ url_for('user.send_message') }}', {phone: phone}, function (data) {
+                    if (data.code == 200) {
+                        alert('短信发送成功')
+                    } else {
+                        alert(data.msg)
+                    }
+                });
+            } else {
+                span_obj.text('必须输入11位手机号码')
+            }
+
+        })
+
+    </script>
+
+{% endblock %}

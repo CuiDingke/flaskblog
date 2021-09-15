@@ -1,0 +1,110 @@
+{% extends "bootstrap/base.html" %}
+{% block title %}首页{% endblock %}
+{% block styles %}
+    {{ super() }}
+    <style>
+        #myfoot {
+            border-top: 1px solid darkgreen;
+            font-size: 14px;
+            text-align: center;
+            color: lightblue;
+        }
+    </style>
+
+
+{% endblock %}
+{% block navbar %}
+    <nav class="navbar navbar-inverse">
+        <div class="container-fluid">
+            <!-- Brand and toggle get grouped for better mobile display -->
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse"
+                        data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="#">BingL博客</a>
+            </div>
+
+            <!-- Collect the nav links, forms, and other content for toggling -->
+            <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                <ul class="nav navbar-nav">
+                    <li class="active"><a href="{{ url_for('user.index') }}">首页 <span class="sr-only">(current)</span></a>
+                    </li>
+                    <li><a href="#">关于我</a></li>
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
+                           aria-expanded="false">文章分类 <span class="caret"></span></a>
+{#                        {% if user %}#}
+                            <ul class="dropdown-menu">
+                                {% for type in types %}
+                                    {% if loop.first %}
+                                        <li><a href="#">{{ type.type_name }}</a></li>
+                                    {% else %}
+                                        <li role="separator" class="divider"></li>
+                                        <li><a href="#">{{ type.type_name }}</a></li>
+                                    {% endif %}
+                                {% endfor %}
+                                {#                            <li><a href="#">程序人生</a></li>#}
+                                {#                            <li role="separator" class="divider"></li>#}
+                                {#                            <li><a href="#">随笔</a></li>#}
+                                {#                            <li role="separator" class="divider"></li>#}
+                                {#                            <li><a href="#">慢生活</a></li>#}
+                            </ul>
+{#                        {% endif %}#}
+                    </li>
+                    <li><a href="{{url_for('user.myphoto')}}">我的相册</a></li>
+                    <li><a href="#">留言板</a></li>
+                </ul>
+                <form class="navbar-form navbar-left">
+                    <div class="form-group">
+                        <input type="text" class="form-control" placeholder="Search">
+                    </div>
+                    <button type="submit" class="btn btn-default">搜索</button>
+                </form>
+
+                <ul class="nav navbar-nav navbar-right">
+                    {% if user %}
+                        <li>
+                            <img src="{{ url_for('static', filename=user.icon) }} " alt="..." class="img-circle"
+                                 height="50px"
+                                 width="50px">
+                        </li>
+                    {% endif %}
+                    {% if user %}
+                        <li class="dropdown">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button"
+                               aria-haspopup="true" aria-expanded="false">欢迎!{{ user.username }} <span
+                                    class="caret"></span></a>
+                            <ul class="dropdown-menu">
+                                <li><a href="{{ url_for('user.user_center') }}">用户中心</a></li>
+                                <li role="separator" class="divider"></li>
+                                <li><a href="{{ url_for('user.logout') }}">退出</a></li>
+                            </ul>
+                        </li>
+                    {% else %}
+                        <li><a href="{{ url_for('user.user_login') }}">登录</a></li>
+                        <li><a href="{{ url_for('user.register') }}">注册</a></li>
+                    {% endif %}
+
+
+                </ul>
+            </div><!-- /.navbar-collapse -->
+        </div><!-- /.container-fluid -->
+    </nav>
+{% endblock %}
+
+{% block content %}
+    {% block newcontent %}
+        <h1>Hello, Bootstrap</h1>
+    {% endblock %}
+
+    {% block footer %}
+        <p id="myfoot">我是你大爷</p>
+    {% endblock %}
+{% endblock %}
+
+
+

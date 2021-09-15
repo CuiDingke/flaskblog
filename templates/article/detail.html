@@ -1,0 +1,104 @@
+{% extends 'base.html' %}
+{% block title %}
+    文章详情
+{% endblock %}
+{% block styles %}
+    {{ super() }}
+    {#    <link rel="stylesheet" href="">#}
+    <style>
+        #container {
+            width: 1000px;
+            height: 1000px;
+            margin: 0 auto;
+        }
+
+        #container p {
+            overflow: auto;
+        {#height: 20px;#}
+        }
+
+        #detail {
+            width: 900px;
+            background-color: darkseagreen;
+            margin-bottom: 20px;
+            border-bottom: 1px solid gray;
+        }
+
+        #left {
+            float: left;
+        }
+
+        #right {
+            float: right;
+        }
+
+        #content {
+            margin-top: 30px;
+        }
+    </style>
+{% endblock %}
+{% block newcontent %}
+    <div id="container">
+        <div id="detail">
+            <h2>{{ article.title }}</h2>
+            <p>
+            <div id="left">作者:{{ article.user.username }}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                发布时间:{{ article.pdatetime }}
+            </div>
+            <div id="right">
+                收藏:<span class="glyphicon glyphicon-heart" aria-hidden="true"></span>
+                <span tag="0">{{ article.save_num }}</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                点赞:<span class="glyphicon glyphicon-thumbs-up" aria-hidden="true"></span>
+                <span tag="0">{{ article.love_num }}</span>
+            </div>
+            </p>
+            <div id="content">
+                {{ article.content | cdecode | safe }}
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block scripts %}
+    {{ super() }}
+    <script>
+        $(function () {
+            // 收藏
+            $('.glyphicon-heart').click(function () {
+                let $this = $(this);
+                // 找个标志位 tag  不断的改变标志位的值  将标志位的值传到后端  然后通过后端去做响应的操作
+                let tag = $this.next('span').attr('tag');
+                $.get('{{ url_for('article.article_save')}}', {aid:{{article.id}}, tag: tag}, function (data) {
+                    $this.next('span').text(data.num_save);
+                });
+                if (tag == 1) {
+                    $this.css({'color': 'black'});
+                    $this.next('span').attr('tag', "0")
+                } else {
+                    $this.css({'color': 'red'});
+                    $this.next('span').attr('tag', "1")
+                }
+
+            });
+            // 点赞
+            $('.glyphicon-thumbs-up').click(function () {
+                let $this = $(this);
+                let tag = $this.next('span').attr('tag')
+                console.log(tag) // 返回的是RGB
+                $.get('{{ url_for('article.article_love')}}', {aid:{{article.id}}, tag: tag}, function (data) {
+                    // 修改点赞数据
+                    $this.next('span').text(data.num_love);
+                })
+                console.log(tag)
+                if (tag == 1) {
+                    $this.css({'color': 'black'});
+                    $this.next('span').attr('tag', "0");
+                } else {
+                    $this.css({'color': 'red'});
+                    $this.next('span').attr('tag', "1");
+                }
+            });
+        })
+
+    </script>
+{% endblock %}

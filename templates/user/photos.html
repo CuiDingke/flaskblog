@@ -1,0 +1,62 @@
+{% extends 'base.html' %}
+{% block title %}
+    相册展示
+{% endblock %}
+{% block styles %}
+    {{ super() }}
+    <style>
+        #container {
+            padding-top: 30px;
+            width: 1000px;
+        {#height: 1200px;#} margin: 0 auto;
+            background-color: #dfe0e4;
+        }
+    </style>
+{% endblock %}
+{% block newcontent %}
+    <div id="container">
+        <div class="row">
+            {#            {% for photo in photos %}#}
+            {#                <div class="col-xs-6 col-sm-4">#}
+            {#                    <img src="http://qzh2je0r2.hn-bkt.clouddn.com/{{ photo.photo_name }}"#}
+            {#                         alt="" height="300px" width="300px">#}
+            {#                </div>#}
+            {#            {% endfor %}#}
+            {% for photo in photos.items %}
+                <div class="col-xs-6 col-sm-4">
+                    <img src="http://qzh2je0r2.hn-bkt.clouddn.com/{{ photo.photo_name }}"
+                         alt="" height="300px" width="300px">
+                </div>
+            {% endfor %}
+        </div>
+        <nav aria-label="..." class=" col-md-offset-4">
+            <ul class="pagination">
+                {#            pagination.has_prev  判断是否存在上一页  如果存在可以点击  否则不可以点击#}
+                <li {% if not photos.has_prev %} class="disabled" {% endif %}><a
+                        href="{{ url_for('user.myphoto') }}?page={{ photos.prev_num }}"
+                        aria-label="Previous"><span
+                        aria-hidden="true">&laquo;</span></a></li>
+                {% for page_num in range(1, photos.pages + 1) %}
+                    <li {% if photos.page==page_num %}  class="active" {% endif %}><a
+                            href="{{ url_for('user.myphoto') }}?page={{ page_num }}">{{ page_num }} <span
+                            class="sr-only">(current)</span></a>
+                    </li>
+                {% endfor %}
+                {#                pagination.has_next  判断是否存在下一页  如果存在下一页 可以点击  否则不可以点击#}
+                <li {% if not photos.has_next %} class="disabled" {% endif %}><a
+                        href="{{ url_for('user.myphoto') }}?page={{ photos.next_num }}" aria-label="Next"><span
+                        aria-hidden="true">&raquo;</span></a></li>
+            </ul>
+        </nav>
+        <nav aria-label="...">
+            <ul class="pager">
+                <li class="previous {% if not photos.has_prev %} disabled {% endif %}"><a
+                        href="{{ url_for('user.myphoto') }}?page={{ photos.prev_num }}"><span
+                        aria-hidden="true">&larr;</span> Older</a></li>
+                <li class="next  {% if not photos.has_next %} disabled {% endif %}"><a
+                        href="{{ url_for('user.myphoto') }}?page={{ photos.next_num }}">Newer <span
+                        aria-hidden="true">&rarr;</span></a></li>
+            </ul>
+        </nav>
+    </div>
+{% endblock %}
