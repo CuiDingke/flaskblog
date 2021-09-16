@@ -6,7 +6,7 @@ import random
 from time import time
 import requests
 import os
-from qiniu import Auth, put_file, etag, put_data
+from qiniu import Auth, put_file, etag, put_data, BucketManager
 import qiniu.config
 # 需要填写你的 Access Key 和 Secret Key
 from settings import Config
@@ -72,3 +72,21 @@ def upload_qiniu(filestorage):
     # print(ret)
     # 返回值  不要返回错误  在后端用的时候也不要搞错了  懂吗
     return ret, info
+
+
+def del_qiniu(PhotoFile):
+    access_key = 'dj_L1cKqSBBKftMLyVUuXnlDwnkeZmZFtfVwIBKm'
+    secret_key = 'rRdqBiMmyXMu-MTUBnavP385NX5nu5NOpc1wAAmr'
+
+    # 构建鉴权对象
+    q = Auth(access_key, secret_key)
+
+    # 初始化BucketManager
+    bucket = BucketManager(q)
+
+    # 要上传的空间
+    bucket_name = 'chuanblog01'
+    key = PhotoFile
+
+    ret, info = bucket.delete(bucket_name, key)
+    return info

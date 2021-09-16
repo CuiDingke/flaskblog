@@ -1,5 +1,5 @@
-from flask import Blueprint, render_template, request, g, redirect, url_for, jsonify
-from apps.article.models import Article, Article_category
+from flask import Blueprint, render_template, request, g, redirect, url_for, jsonify, session
+from apps.article.models import Article, Article_category, Comment
 from apps.user.models import User
 from exts import db
 
@@ -26,16 +26,27 @@ def publish_article():
         return redirect(url_for('user.index'))
 
 
+# 查看文章详情
 @article_bp1.route('/detail')
 def article_detail():
+    # 进详情页  必须传aid 文章的id
     article_id = request.args.get('aid')
     # 查询所有文章
     article = Article.query.get(article_id)
     # 文章类型
     types = Article_category.query.all()
-    return render_template('article/detail.html', article=article, types=types, user=g.user)
+    user_id = session.get('uid', None)
+    if user_id:
+        user = User.query.get(user_id)
+    else:
+        user = None
+    page = int(request.args.get('page', 1))
+    comments = Comment.query.filter(Comment.article_id == article.id).order_by(-Comment.cdatetime).paginate(page=page,
+                                                                                                            per_page=5)
+    return render_template('article/detail.html', article=article, types=types, user=user, comments=comments)
 
 
+# 点赞量
 @article_bp1.route('/love')
 def article_love():
     article_id = request.args.get('aid')
@@ -51,6 +62,7 @@ def article_love():
     # return redirect(url_for('article.article_detail'))
 
 
+# 收藏量
 @article_bp1.route('/save')
 def article_save():
     article_id = request.args.get('aid')
@@ -64,3 +76,21 @@ def article_save():
     db.session.commit()
     return jsonify(num_save=article.save_num)
     # return redirect(url_for('article.article_detail'))
+
+
+# 发表评论
+@article_bp1.route('/add_comment', methods=['GET', 'POST'])
+def article_comment():
+    if request.method == 'POST':
+        comment_content = request.form.get('content')
+        article_id = request.args.get('aid')
+        user_id = g.user.id
+        # 创建模型
+        comment = Comment()
+        comment.comment = comment_content
+        comment.user_id = user_id
+        comment.article_id = article_id
+        db.session.add(comment)
+        db.session.commit()
+        return redirect(url_for('article.article_detail') + "?aid=" + article_id)
+    return redirect(url_for('user.index'))

@@ -15,6 +15,8 @@ class User(db.Model):
     # 增加一个字段  relationship不是数据库层面，不需要迁移  是view和templates层面的
     articles = db.relationship('Article', backref='user')
     photos = db.relationship('Photo', backref='user')
+    comments = db.relationship('Comment', backref='user')
+    aboutme = db.relationship('AboutMe', backref='user')
 
     def __str__(self):
         return self.username
@@ -28,3 +30,13 @@ class Photo(db.Model):
 
     def __str__(self):
         return self.photo_name
+
+
+class AboutMe(db.Model):
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    content = db.Column(db.BLOB, nullable=False)
+    use_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    pdatetime = db.Column(db.DateTime, default=datetime.now)
+
+    def __str__(self):
+        return self.content

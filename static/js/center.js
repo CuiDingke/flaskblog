@@ -38,4 +38,18 @@ $(function () {
             span_ele.text('手机格式错误');
         }
     });
+
+    // 相册图片的删除
+    $('.photo-del').click(function () {
+        flag = confirm('确定删除此图片？')
+        if (flag) {
+            // 获取属性值tag tag属性就是图片的主键
+            let pid = $(this).attr('tag');
+            console.log(pid)
+            // 1.ajax 2.location.href
+            location.href = '/user/photo_del?pid=' + pid;
+        }
+
+
+    });
 });

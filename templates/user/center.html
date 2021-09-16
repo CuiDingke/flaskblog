@@ -15,8 +15,8 @@
             margin: 0 auto;
         }
 
-        #container h1 {
-        {#padding-left: 170px;#} padding-right: 170px;
+        .logintab h3 {
+            padding-right: 170px;
             text-align: center;
             margin-bottom: 50px;
         }
@@ -34,7 +34,7 @@
 
         #tab span {
             display: inline;
-            width: 120px;
+            width: 1000px;
             text-align: center;
             cursor: default;
         }
@@ -44,15 +44,13 @@
             font-size: 14px;
         }
 
-        {##container h1#}
     </style>
 {% endblock %}
 
 {% block newcontent %}
     <div id="container">
-        <h1>用户中心</h1>
         <div id="tab">
-            <span>用户信息修改</span> | <span>发表文章</span> | <span>后续添加</span>
+            <span>用户信息修改</span> | <span>发表文章</span> | <span>个人相册</span> | <span>填写介绍</span>
         </div>
         <div class="logintab">
             <p id="tips">{{ msg }}</p>
@@ -147,12 +145,35 @@
                     </div>
                 </div>
             </form>
+            <h3>我的相册</h3>
             <div class="row">
                 {% for photo in photos %}
-                    <div class="col-xs-6 col-sm-4"><img src="http://qzh2je0r2.hn-bkt.clouddn.com/{{ photo.photo_name }}"
-                                                        alt="" height="160px" width="140px"></div>
+                    <div class="col-xs-6 col-sm-4">
+                        <img src="http://qzh2je0r2.hn-bkt.clouddn.com/{{ photo.photo_name }}"
+                             alt="" class="img-rounded  image" height="160px" width="140px">
+                        <div class="row">
+                            <div class="col-md-offset-1 col-md-4">
+                                <button type="button" class="btn btn-info btn-xs photo-del" tag="{{ photo.id }}">删除
+                                </button>
+                            </div>
+                        </div>
+                    </div>
                 {% endfor %}
             </div>
+        </div>
+        <div class="logintab">
+            <form class="form-horizontal" method="post" action="{{ url_for('user.about_me') }}">
+                <div class="form-group">
+                    <div class=" col-md-offset-2 col-md-6">
+                        <textarea name="content" class="mytextarea" cols="30" rows="10"></textarea>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-md-offset-2 col-md-6">
+                        <button type="submit" class="btn btn-primary col-md-3">提交</button>
+                    </div>
+                </div>
+            </form>
         </div>
     </div>
 {% endblock %}

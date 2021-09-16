@@ -20,7 +20,7 @@ class Article(db.Model):
     # 外键  一对多 同步到数据库的关系
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     category_id = db.Column(db.Integer, db.ForeignKey('article_category.id'), nullable=False)
-    comments = db.relationship('Comment', backref='articles')
+    comments = db.relationship('Comment', backref='article')
 
 
 class Comment(db.Model):

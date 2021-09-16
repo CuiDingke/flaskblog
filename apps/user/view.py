@@ -1,12 +1,11 @@
+import codecs
 import os.path
 from pathlib import Path
-
 from flask import Blueprint, render_template, request, jsonify, redirect, url_for, session, g
 from werkzeug.security import generate_password_hash, check_password_hash
 from werkzeug.utils import secure_filename
-
 from apps.article.models import Article_category, Article
-from apps.user.models import User, Photo
+from apps.user.models import User, Photo, AboutMe
 from apps.utils.util import *
 from exts import db
 from settings import Config
@@ -14,7 +13,8 @@ from settings import Config
 user_bp1 = Blueprint('user', __name__, url_prefix='/user')
 
 # 需要验证的路径  验证是否登录了
-required_login_list = ['/user/center', '/user/change', '/article/publish', '/article/detail', '/user/upload_photo']
+required_login_list = ['/user/center', '/user/change', '/article/publish', '/user/upload_photo', '/user/photo_del',
+                       '/article/add_comment', '/user/about', '/user/me']
 
 
 @user_bp1.before_app_first_request
@@ -34,8 +34,6 @@ def before_request():
             user = User.query.get(id)
             # 本次请求的一个对象  g只在这一次请求是有效的
             g.user = user
-            # 文章类型
-
             # return render_template('user/center.html', user=user)
 
 
@@ -220,7 +218,6 @@ def user_center():
     types = Article_category.query.all()
     # 获取用户photo的名字
     photos = Photo.query.filter(Photo.user_id == g.user.id).all()
-
     return render_template('user/center.html', user=g.user, types=types, photos=photos)
 
 
@@ -252,6 +249,7 @@ def user_change():
             print('== == == == == == == == == == == == == ==')
             print(file_path)
             print('== == == == == == == == == == == == == ==')
+            # 保存在本地  将图片
             icon.save(file_path)
             # 保存成功
             user = g.user
@@ -259,6 +257,7 @@ def user_change():
             user.phone = phone
             user.email = email
             # 在页面加载时 是基于static文件夹去寻找的文件 只需要上传相对路径就行 upload/icon/...jpg
+            # 将图片的本地路径加载到数据库
             path = 'upload/icon'
             file_path = Path(os.path.join(path, icon_name)).as_posix()
             user.icon = file_path
@@ -297,25 +296,81 @@ def upload_photo():
         photo.user_id = g.user.id
         db.session.add(photo)
         db.session.commit()
-        return redirect({{url_for('user.user_center')}})
+        return redirect(url_for('user.user_center'))
     else:
-        return '上传失败，请刷新重试！！！'
+        return render_template('500.html', err_msg='上传相册图片失败！！')
 
 
+# 我的相册
 @user_bp1.route('/myphoto')
 def myphoto():
     # photos = Photo.query.all()
     # 不要忘记那个1
     page = int(request.args.get('page', 1))
+    # 分页操作
+    # photos是一个pagination对象
     photos = Photo.query.paginate(page=page, per_page=6)
     types = Article_category.query.all()
-    id = session.get('uid')
+    id = session.get('uid', None)
     user = User.query.get(id)
     return render_template('user/photos.html', photos=photos, types=types, user=user)
 
 
+# 删除相册图片
+@user_bp1.route('photo_del')
+def del_photo():
+    pid = request.args.get('pid')
+    photo = Photo.query.get(pid)
+    filename = photo.photo_name
+    # 封装好的一个删除七牛存储文件的函数
+    info = del_qiniu(filename)
+    # 判断状态码
+    if info.status_code == 200:
+        # 删除数据库的内容
+        db.session.delete(photo)
+        db.session.commit()
+        return redirect(url_for('user.user_center'))
+    else:
+        referer = request.headers.get('Referer', None)
+        return render_template('500.html', err_msg='删除相册图片失败！！', referer=referer)
+
+
+# 提交个人介绍
+@user_bp1.route('/about', methods=['GET', 'POST'])
+def about_me():
+    if request.method == 'POST':
+        content = request.form.get('content')
+        print(content)
+        # all() 是个列表 需要遍历 不管返回值有多少个对象  first()  是一个对象
+        flag = AboutMe.query.filter(AboutMe.use_id == g.user.id).first()
+        if flag:
+            flag.content = content.encode('utf-8')
+            db.session.commit()
+        else:
+            me = AboutMe()
+            me.content = content.encode('utf-8')
+            me.use_id = g.user.id
+            db.session.add(me)
+            db.session.commit()
+        return redirect(url_for('user.me'))
+    # try:
+    # except Exception as err:
+    else:
+        referer = request.headers.get('Referer', None)
+        return render_template('500.html', err_msg='删除相册图片失败！！', referer=referer)
+
+
+# 查看个人信息
+@user_bp1.route('/me')
+def me():
+    content = AboutMe.query.filter(AboutMe.use_id == g.user.id).all()
+    types = Article_category.query.all()
+    return render_template('user/aboutme.html', content=content, user=g.user, types=types)
+
+
+
 @user_bp1.route('/test')
 def test():
-    user = User.query.filter(User.phone == '13526265762').first()
-    print(user)
-    return 'aaa'
+    print(request.headers)
+    print(request.headers.get('Referer', None))
+    return render_template('500.html', err_msg='删除相册图片失败！！')

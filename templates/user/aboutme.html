@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+{% block title %}
+    个人信息
+{% endblock %}
+{% block styles %}
+    {{ super() }}
+    <style>
+        #container {
+            width: 1000px;
+            height: 800px;
+            background-color: darkseagreen;
+            margin: 0 auto;
+        }
+    </style>
+{% endblock %}
+{% block newcontent %}
+    <div id="container">
+        {% if content %}
+            {% for cont in content %}
+                {{ cont.content | cdecode | safe }}
+            {% endfor %}
+        {% else %}
+            没有个人介绍哦！！！！！！可以去用户中心设置！！！
+        {% endif %}
+    </div>
+{% endblock %}

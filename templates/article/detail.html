@@ -4,7 +4,6 @@
 {% endblock %}
 {% block styles %}
     {{ super() }}
-    {#    <link rel="stylesheet" href="">#}
     <style>
         #container {
             width: 1000px;
@@ -24,11 +23,28 @@
             border-bottom: 1px solid gray;
         }
 
-        #left {
+        #comment {
+            margin-top: 50px;
+            width: 900px;
+        }
+
+        #commit_item {
+            width: 900px;
+        }
+
+        .item {
+            width: 900px;
+            height: 80px;
+            background-color: #00feff;
+            margin-bottom: 15px;
+            border: 1px solid gray;
+        }
+
+        #left, #item-left {
             float: left;
         }
 
-        #right {
+        #right, #item_right {
             float: right;
         }
 
@@ -56,6 +72,76 @@
                 {{ article.content | cdecode | safe }}
             </div>
         </div>
+
+        <div id="comment">
+            <div>
+                <form action="{{ url_for('article.article_comment') }}?aid={{ article.id }}" method="post">
+                    {#                    <input type="hidden" name="aid" value="{{ article.id }}">#}
+                    <p>
+                        <textarea name="content" id="" cols="120" rows="10"></textarea>
+                    </p>
+                    <p>
+                        <input type="submit" value="评论" class="btn btn-info">
+                    </p>
+                </form>
+            </div>
+            <h3>评论如下:</h3>
+            <div id="commit_item">
+            {#            没有分页#}
+{#                {% if article.comments %}#}
+{#                    {% for comment in article.comments %}#}
+{#                        <div class="item">#}
+{#                            <div id="item-left">#}
+{#                                <img src="{{ url_for('static', filename=comment.user.icon) }}" alt="" height="50px"#}
+{#                                     width="70px">#}
+{#                            </div>#}
+{#                            <div id="item_right">#}
+{#                                <p>#}
+{#                                    <span>{{ comment.user.username }}</span>#}
+{#                                    <span>{{ comment.cdatetime }}</span>#}
+{#                                </p>#}
+{#                                <p>#}
+{#                                    {{ comment.comment }}#}
+{#                                </p>#}
+{#                            </div>#}
+{#                        </div>#}
+{#                    {% endfor %}#}
+{#                {% else %}#}
+{#                    <div> 还没有任何评论！！！</div>#}
+{#                {% endif %}#}
+                {% if comments.items %}
+                    {% for comment in comments.items %}
+                        <div class="item">
+                            <div id="item-left">
+                                <img src="{{ url_for('static', filename=comment.user.icon) }}" alt="" height="50px"
+                                     width="70px">
+                            </div>
+                            <div id="item_right">
+                                <p>
+                                    <span>{{ comment.user.username }}</span>
+                                    <span>{{ comment.cdatetime }}</span>
+                                </p>
+                                <p>
+                                    {{ comment.comment }}
+                                </p>
+                            </div>
+                        </div>
+                    {% endfor %}
+                {% else %}
+                    <div> 还没有任何评论！！！</div>
+                {% endif %}
+                <nav aria-label="...">
+                    <ul class="pager">
+                        <li class="previous {% if not comments.has_prev %} disabled {% endif %}"><a
+                                href="{{ url_for('article.article_detail') }}?page={{ comments.prev_num }}&aid={{ article.id }}"><span
+                                aria-hidden="true">&larr;</span> 上一页</a></li>
+                        <li class="next  {% if not comments.has_next %} disabled {% endif %}"><a
+                                href="{{ url_for('article.article_detail') }}?page={{ comments.next_num }}&aid={{ article.id }}">下一页 <span
+                                aria-hidden="true">&rarr;</span></a></li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
     </div>
 {% endblock %}
 
@@ -78,7 +164,6 @@
                     $this.css({'color': 'red'});
                     $this.next('span').attr('tag', "1")
                 }
-
             });
             // 点赞
             $('.glyphicon-thumbs-up').click(function () {
@@ -99,6 +184,5 @@
                 }
             });
         })
-
     </script>
 {% endblock %}
