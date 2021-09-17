@@ -44,124 +44,149 @@
             font-size: 14px;
         }
 
+
     </style>
 {% endblock %}
 
 {% block newcontent %}
     <div id="container">
-        <div id="tab">
-            <span>用户信息修改</span> | <span>发表文章</span> | <span>个人相册</span> | <span>填写介绍</span>
-        </div>
-        <div class="logintab">
-            <p id="tips">{{ msg }}</p>
-            {#            如果是文件上传 表单中必须添加enctype#}
-            <form class="form-horizontal" method="post" action="{{ url_for('user.user_change') }}"
-                  enctype="multipart/form-data">
-                <div class="form-group">
-                    <div class="col-md-offset-2 col-md-6 ">
-                        <input type="text" class="form-control" id="inputUsername" placeholder="姓名"
-                               name="username" value="{{ g.user.username }}">
-                    </div>
+    <div id="tab">
+        <span>用户信息修改</span> | <span>发表文章</span> | <span>个人相册</span> | <span>个人留言</span> | <span>填写介绍</span>
+    </div>
+    <div class="logintab">
+        <p id="tips">{{ msg }}</p>
+        {#            如果是文件上传 表单中必须添加enctype#}
+        <form class="form-horizontal" method="post" action="{{ url_for('user.user_change') }}"
+              enctype="multipart/form-data">
+            <div class="form-group">
+                <div class="col-md-offset-2 col-md-6 ">
+                    <input type="text" class="form-control" id="inputUsername" placeholder="姓名"
+                           name="username" value="{{ g.user.username }}">
                 </div>
-                {#            user 和 g.user 一样   都是user对象  g传到这个页面还有作用#}
-                <div class="form-group">
-                    <div class="col-md-offset-2 col-md-6 ">
-                        <input type="text" class="form-control" id="inputPhone" placeholder="手机号"
-                               name="phone" value="{{ user.phone }}"> <span></span>
-                    </div>
+            </div>
+            {#            user 和 g.user 一样   都是user对象  g传到这个页面还有作用#}
+            <div class="form-group">
+                <div class="col-md-offset-2 col-md-6 ">
+                    <input type="text" class="form-control" id="inputPhone" placeholder="手机号"
+                           name="phone" value="{{ user.phone }}"> <span></span>
                 </div>
-                <div class="form-group">
-                    <div class=" col-md-offset-2 col-md-6">
-                        <input type="email" class="form-control" id="inputEamil" placeholder="邮箱" name="email"
-                               value="{{ g.user.email }}">
-                    </div>
+            </div>
+            <div class="form-group">
+                <div class=" col-md-offset-2 col-md-6">
+                    <input type="email" class="form-control" id="inputEamil" placeholder="邮箱" name="email"
+                           value="{{ g.user.email }}">
                 </div>
-                <div class="form-group">
-                    <div class=" col-md-offset-2 col-md-6">
-                        <input type="file" class="form-control" id="inputFile" placeholder="头像" name="icon">
-                    </div>
+            </div>
+            <div class="form-group">
+                <div class=" col-md-offset-2 col-md-6">
+                    <input type="file" class="form-control" id="inputFile" placeholder="头像" name="icon">
                 </div>
-                <div class="form-group">
-                    <div class=" col-md-offset-2 col-md-3">
-                        <p>
-                            <img src="{% if user.icon %} {{ url_for('static', filename=user.icon) }}
+            </div>
+            <div class="form-group">
+                <div class=" col-md-offset-2 col-md-3">
+                    <p>
+                        <img src="{% if user.icon %} {{ url_for('static', filename=user.icon) }}
                                 {% else %}{{ url_for('static', filename='images/touxiang.jpg') }} {% endif %}" alt=""
-                                 height="80px" width="70px">
-                        </p>
-                    </div>
+                             height="80px" width="70px">
+                    </p>
                 </div>
+            </div>
 
-                <div class="form-group">
-                    <div class="col-md-offset-2 col-md-10">
-                        <button type="submit" class="btn btn-primary col-md-3">修&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;改
-                        </button>
-                        {#                        <button type="reset" class="btn btn-primary col-md-3">重&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;置#}
-                        {#                        </button>#}
-                    </div>
+            <div class="form-group">
+                <div class="col-md-offset-2 col-md-10">
+                    <button type="submit" class="btn btn-primary col-md-3">修&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;改
+                    </button>
+                    {#                        <button type="reset" class="btn btn-primary col-md-3">重&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;置#}
+                    {#                        </button>#}
                 </div>
-            </form>
-        </div>
-        <div class="logintab">
-            {#            <form class="form-horizontal" method="post" action="{{ url_for('article.publish_article') }}?id={{ user.id }}">#}
-            <form class="form-horizontal" method="post" action="{{ url_for('article.publish_article') }}">
-                <div class="form-group">
-                    <div class="col-md-offset-2 col-md-6 ">
-                        <input type="text" class="form-control" id="inputTitle" placeholder="请输入文章标题"
-                               name="title">
-                    </div>
+            </div>
+        </form>
+    </div>
+    <div class="logintab">
+        {#            <form class="form-horizontal" method="post" action="{{ url_for('article.publish_article') }}?id={{ user.id }}">#}
+        <form class="form-horizontal" method="post" action="{{ url_for('article.publish_article') }}">
+            <div class="form-group">
+                <div class="col-md-offset-2 col-md-6 ">
+                    <input type="text" class="form-control" id="inputTitle" placeholder="请输入文章标题"
+                           name="title">
                 </div>
-                <div class="form-group">
-                    <div class=" col-md-offset-2 col-md-4">
-                        <select name="type" id="">
-                            <option value="0">选择文章的类型</option>
-                            {% for type in types %}
-                                <option value="{{ type.id }}">{{ type.type_name }}</option>
-                            {% endfor %}
-                        </select>
-                    </div>
+            </div>
+            <div class="form-group">
+                <div class=" col-md-offset-2 col-md-4">
+                    <select name="type" id="">
+                        <option value="0">选择文章的类型</option>
+                        {% for type in types %}
+                            <option value="{{ type.id }}">{{ type.type_name }}</option>
+                        {% endfor %}
+                    </select>
                 </div>
-                <div class="form-group">
-                    <div class=" col-md-offset-2 col-md-6">
-                        <textarea name="content" class="mytextarea" cols="30" rows="10"></textarea>
-                    </div>
+            </div>
+            <div class="form-group">
+                <div class=" col-md-offset-2 col-md-6">
+                    <textarea name="content" class="mytextarea" cols="30" rows="10"></textarea>
                 </div>
-                <div class="form-group">
-                    <div class="col-md-offset-2 col-md-6">
-                        <button type="submit" class="btn btn-primary col-md-3">发表文章
-                        </button>
-                    </div>
+            </div>
+            <div class="form-group">
+                <div class="col-md-offset-2 col-md-6">
+                    <button type="submit" class="btn btn-primary col-md-3">发表文章
+                    </button>
                 </div>
-            </form>
-        </div>
-        <div class="logintab">
-            <form class="form-horizontal" method="post" action="{{ url_for('user.upload_photo') }}"
-                  enctype="multipart/form-data">
-                <div class="form-group">
-                    <div class=" col-md-offset-2 col-md-4">
-                        <input type="file" class="form-control" id="inputPhoto" placeholder="图片" name="photo">
-                    </div>
-                    <div class="col-md-3">
-                        <input type="submit" id="btnUp" class="btn btn-primary" value="上传图片">
-                    </div>
+            </div>
+        </form>
+    </div>
+    <div class="logintab">
+        <form class="form-horizontal" method="post" action="{{ url_for('user.upload_photo') }}"
+              enctype="multipart/form-data">
+            <div class="form-group">
+                <div class=" col-md-offset-2 col-md-4">
+                    <input type="file" class="form-control" id="inputPhoto" placeholder="图片" name="photo">
                 </div>
-            </form>
-            <h3>我的相册</h3>
-            <div class="row">
-                {% for photo in photos %}
-                    <div class="col-xs-6 col-sm-4">
-                        <img src="http://qzh2je0r2.hn-bkt.clouddn.com/{{ photo.photo_name }}"
-                             alt="" class="img-rounded  image" height="160px" width="140px">
-                        <div class="row">
-                            <div class="col-md-offset-1 col-md-4">
-                                <button type="button" class="btn btn-info btn-xs photo-del" tag="{{ photo.id }}">删除
-                                </button>
-                            </div>
+                <div class="col-md-3">
+                    <input type="submit" id="btnUp" class="btn btn-primary" value="上传图片">
+                </div>
+            </div>
+        </form>
+        <h3>我的相册</h3>
+        <div class="row">
+            {% for photo in photos %}
+                <div class="col-xs-6 col-sm-4">
+                    <img src="http://qzh2je0r2.hn-bkt.clouddn.com/{{ photo.photo_name }}"
+                         alt="" class="img-rounded  image" height="160px" width="140px">
+                    <div class="row">
+                        <div class="col-md-offset-1 col-md-4">
+                            <button type="button" class="btn btn-info btn-xs photo-del" tag="{{ photo.id }}">删除
+                            </button>
                         </div>
                     </div>
-                {% endfor %}
-            </div>
+                </div>
+            {% endfor %}
         </div>
-        <div class="logintab">
+    </div>
+    <div class="logintab">
+        <div id="comment">
+                {% if messages %}
+                    <table class="table table-hover">
+                        <tr>
+                            <th>序号</th>
+                            <th>留言</th>
+                            <th>时间</th>
+                            <th>操作</th>
+                        </tr>
+                        {% for message in messages %}
+                            <tr>
+                                <td>{{ loop.index }}</td>
+                                <td>{{ message.content }}</td>
+                                <td>{{ message.mdatetime }}</td>
+                                <td><a href="{{ url_for('user.delete_board') }}?mid={{ message.id }}">删除留言</a></td>
+                            </tr>
+                        {% endfor %}
+                    </table>
+                {% else %}
+                    <div> 还没有任何留言！！！</div>
+                {% endif %}
+        </div>
+    </div>
+    <div class="logintab">
             <form class="form-horizontal" method="post" action="{{ url_for('user.about_me') }}">
                 <div class="form-group">
                     <div class=" col-md-offset-2 col-md-6">
@@ -175,7 +200,7 @@
                 </div>
             </form>
         </div>
-    </div>
+
 {% endblock %}
 
 {% block scripts %}

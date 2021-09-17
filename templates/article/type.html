@@ -1,0 +1,70 @@
+{% extends 'base.html' %}
+{% block title %}
+    文章详情
+{% endblock %}
+{% block styles %}
+    {{ super() }}
+    <style>
+        #container {
+            width: 1000px;
+            height: 1000px;
+            margin: 0 auto;
+        }
+
+        .article {
+            width: 900px;
+            background-color: darkseagreen;
+        {#height: 100px;#} margin-bottom: 20px;
+            border-bottom: 1px solid gray;
+        }
+
+        .article div span {
+            margin-right: 10px;
+            padding-right: 20px;
+        }
+
+    </style>
+{% endblock %}
+{% block newcontent %}
+    <div id="container">
+{#        <h3>{{}}</h3>#}
+        <div id="comment">
+            <div id="commit_item">
+                {% if articles.items %}
+                    {% for article in articles.items %}
+                        <div class="item">
+                                <div class="article">
+                                    <h4>
+                                        <a href="{{ url_for('article.article_detail') }}?aid={{ article.id }}">{{ article.title }}</a>
+                                    </h4>
+                                    <p>
+                                        <span>作者:{{ article.user.username }}</span>
+                                        <br>
+                                        {#                    通过过滤器先将二进编码出来出来    然后 用safe 不讲标签进行转义   让浏览器进行解析#}
+                                        <span>{{ article.content | cdecode | safe }}</span>
+                                    </p>
+                                    <div>
+                                        <span style="margin-left: 0">发布时间: {{ article.pdatetime }}</span>
+                                        <span>收藏:{{ article.save_num }}</span><span>点击量:{{ article.click_num }}</span>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                {% else %}
+                    <div> 还没有文章！！！</div>
+                {% endif %}
+                <nav aria-label="...">
+                    <ul class="pager">
+                        <li class="previous {% if not articles.has_prev %} disabled {% endif %}"><a
+                                href="{{ url_for('article.type_article') }}?page={{ articles.prev_num }}&type={{ type_id }}"><span
+                                aria-hidden="true">&larr;</span> 上一页</a></li>
+                        <li class="next  {% if not articles.has_next %} disabled {% endif %}"><a
+                                href="{{ url_for('article.type_article') }}?page={{ articles.next_num }}&type={{ type_id }}">下一页
+                            <span
+                                    aria-hidden="true">&rarr;</span></a></li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+
+{% endblock %}

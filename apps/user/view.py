@@ -5,7 +5,7 @@ from flask import Blueprint, render_template, request, jsonify, redirect, url_fo
 from werkzeug.security import generate_password_hash, check_password_hash
 from werkzeug.utils import secure_filename
 from apps.article.models import Article_category, Article
-from apps.user.models import User, Photo, AboutMe
+from apps.user.models import User, Photo, AboutMe, MessageBoard
 from apps.utils.util import *
 from exts import db
 from settings import Config
@@ -29,7 +29,8 @@ def before_request():
     if request.path in required_login_list:
         id = session.get('uid')
         if not id:
-            return render_template('user/login.html')
+            types = Article_category.query.all()
+            return render_template('user/login.html', types=types)
         else:
             user = User.query.get(id)
             # 本次请求的一个对象  g只在这一次请求是有效的
@@ -218,7 +219,10 @@ def user_center():
     types = Article_category.query.all()
     # 获取用户photo的名字
     photos = Photo.query.filter(Photo.user_id == g.user.id).all()
-    return render_template('user/center.html', user=g.user, types=types, photos=photos)
+    # 获取用户留言
+    messages = MessageBoard.query.filter(MessageBoard.user_id == g.user.id).order_by(-MessageBoard.mdatetime).all()
+    print(messages)
+    return render_template('user/center.html', user=g.user, types=types, photos=photos, messages=messages)
 
 
 # 可以上传的图片的扩展名
@@ -368,9 +372,39 @@ def me():
     return render_template('user/aboutme.html', content=content, user=g.user, types=types)
 
 
+# 留言板
+@user_bp1.route('/board', methods=['GET', 'POST'])
+def show_board():
+    if request.method == 'POST':
+        content = request.form.get('content')
+        message = MessageBoard()
+        uid = session.get('uid', None)
+        if uid:
+            message.user_id = uid
+        message.content = content
+        db.session.add(message)
+        db.session.commit()
+        return redirect(url_for('user.show_board'))
+    else:
+        uid = session.get('uid', None)
+        user = None
+        if uid:
+            user = User.query.get(uid)
+        page = int(request.args.get('page', 1))
+        messages = MessageBoard.query.order_by(-MessageBoard.mdatetime).paginate(page=page, per_page=5)
+        types = Article_category.query.all()
+        return render_template('user/board.html', user=user, messages=messages, types=types)
 
-@user_bp1.route('/test')
-def test():
-    print(request.headers)
-    print(request.headers.get('Referer', None))
-    return render_template('500.html', err_msg='删除相册图片失败！！')
+
+
+
+
+# 删除留言
+@user_bp1.route('/board_del')
+def delete_board():
+    mid = request.args.get('mid')
+    if mid:
+        del_b = MessageBoard.query.get(mid)
+        db.session.delete(del_b)
+        db.session.commit()
+        return redirect(url_for('user.user_center'))

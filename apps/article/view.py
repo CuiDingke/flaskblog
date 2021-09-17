@@ -94,3 +94,17 @@ def article_comment():
         db.session.commit()
         return redirect(url_for('article.article_detail') + "?aid=" + article_id)
     return redirect(url_for('user.index'))
+
+
+# 查看个人信息
+@article_bp1.route('/type')
+def type_article():
+    type_id = request.args.get('type')
+    page = int(request.args.get('page', 1))
+    articles = Article.query.filter(Article.category_id == type_id).paginate(page=page, per_page=5)
+    types = Article_category.query.all()
+    uid = session.get('uid', None)
+    user = None
+    if uid:
+        user = User.query.get(uid)
+    return render_template('article/type.html', user=user, types=types, articles=articles, type_id=type_id)

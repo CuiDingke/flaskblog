@@ -40,11 +40,11 @@
 {#                        {% if user %}#}
                             <ul class="dropdown-menu">
                                 {% for type in types %}
-                                    {% if loop.first %}
-                                        <li><a href="#">{{ type.type_name }}</a></li>
+                                    {% if loop.last %}
+                                        <li><a href="{{url_for('article.type_article')}}?type={{ type.id }}">{{ type.type_name }}</a></li>
                                     {% else %}
+                                        <li><a href="{{url_for('article.type_article')}}?type={{ type.id }}">{{ type.type_name }}</a></li>
                                         <li role="separator" class="divider"></li>
-                                        <li><a href="#">{{ type.type_name }}</a></li>
                                     {% endif %}
                                 {% endfor %}
                                 {#                            <li><a href="#">程序人生</a></li>#}
@@ -56,7 +56,7 @@
 {#                        {% endif %}#}
                     </li>
                     <li><a href="{{url_for('user.myphoto')}}">我的相册</a></li>
-                    <li><a href="#">留言板</a></li>
+                    <li><a href="{{ url_for('user.show_board') }}">留言板</a></li>
                 </ul>
                 <form class="navbar-form navbar-left">
                     <div class="form-group">
