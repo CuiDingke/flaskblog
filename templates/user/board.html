@@ -58,14 +58,13 @@
                     </p>
                 </form>
             </div>
-
             <div id="commit_item">
                 {% if messages.items %}
                     {% for message in messages.items %}
                         <div class="item">
                             <div id="item-left">
                                 <img src="
-                                        {% if message.user.icon %}{{ url_for('static', filename=message.user.icon) }}{% else %}{{ url_for('static', filename='images/touxiang.jpg') }}{% endif %}"
+                                        {% if message.user.icon %}{{ url_for('static', filename=message.user.icon) }}{% else %}{{ url_for('static', filename='Images/touxiang.jpg') }}{% endif %}"
                                      alt="" height="50px" width="70px">
                                 {#                            <img src="{{ url_for('static', filename='images/touxiang.jpg') }}" alt="" height="50px" width="70px">#}
                             </div>
@@ -100,5 +99,4 @@
                 </nav>
             </div>
         </div>
-
 {% endblock %}

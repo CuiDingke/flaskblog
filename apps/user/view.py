@@ -109,14 +109,13 @@ def register():
             user.password = generate_password_hash(password)
             user.phone = phone
             user.email = email
-            user.icon = 'images/touxiang.jpg'
+            user.icon = 'Images/touxiang.jpg'
             db.session.add(user)
             db.session.commit()
-            return render_template('user/index.html')
+            return redirect(url_for('user.user_login'))
         else:
             return render_template('user/register.html')
-    else:
-        return render_template('user/register.html')
+    return render_template('user/register.html')
 
 
 # 手机号码
@@ -394,9 +393,6 @@ def show_board():
         messages = MessageBoard.query.order_by(-MessageBoard.mdatetime).paginate(page=page, per_page=5)
         types = Article_category.query.all()
         return render_template('user/board.html', user=user, messages=messages, types=types)
-
-
-
 
 
 # 删除留言
