@@ -6,9 +6,13 @@ import random
 from time import time
 import requests
 import os
+
+from flask import session
 from qiniu import Auth, put_file, etag, put_data, BucketManager
 import qiniu.config
 # 需要填写你的 Access Key 和 Secret Key
+from apps.article.models import Article_category
+from apps.user.models import User
 from settings import Config
 
 
@@ -90,3 +94,12 @@ def del_qiniu(PhotoFile):
 
     ret, info = bucket.delete(bucket_name, key)
     return info
+
+
+def user_type():
+    types = Article_category.query.all()
+    user = None
+    user_id = session.get('uid', None)
+    if user_id:
+        user = User.query.get(user_id)
+    return user, types

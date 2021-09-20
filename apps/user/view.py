@@ -1,5 +1,6 @@
 import codecs
 import os.path
+
 from pathlib import Path
 from flask import Blueprint, render_template, request, jsonify, redirect, url_for, session, g
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -7,8 +8,9 @@ from werkzeug.utils import secure_filename
 from apps.article.models import Article_category, Article
 from apps.user.models import User, Photo, AboutMe, MessageBoard
 from apps.utils.util import *
-from exts import db
+from exts import db, cache
 from settings import Config
+from flask_caching import Cache
 
 user_bp1 = Blueprint('user', __name__, url_prefix='/user')
 
@@ -59,6 +61,7 @@ def content_decode(content):
     return content[:200]
 
 
+# @cache.cached(timeout=5)
 # 首页
 @user_bp1.route('/')
 def index():
@@ -83,7 +86,14 @@ def index():
     print(pagination.total)  # 一共有多少条目
     if uid:
         user = User.query.get(uid)
-        return render_template('user/index.html', user=user, types=types, articles=articles, pagination=pagination)
+        params = {
+            'user': user,
+            'types': types,
+            'articles': articles,
+            'pagination': pagination,
+
+        }
+        return render_template('user/index.html', **params)
     else:
         return render_template('user/index.html', types=types, articles=articles, pagination=pagination)
 
@@ -155,8 +165,10 @@ def user_login():
         elif f == '2':
             phone = request.form.get('phone')
             code = request.form.get('code')
-            # 先验证验证码
-            valid_code = session.get(phone, None)
+            # 先验证验证码 session 取值
+            # valid_code = session.get(phone, None)
+            # redis 取值
+            valid_code = cache.get(phone)
             if code == valid_code:
                 user = User.query.filter(User.phone == phone).first()
                 if user:
@@ -191,11 +203,15 @@ def send_message():
     if user:
         ret = util_sendmsg(phone)
         print(ret)
+        # 验证是否发送成功
         if ret is not None:
             if ret["code"] == 200:
                 obj = ret["obj"]
                 print(obj)
-                session[phone] = obj
+                # 用session记录phone 和 验证码
+                # session[phone] = obj
+                # 将phone和验证码放入redis缓存中  cache.set(key, value, Timeout)
+                cache.set(phone, obj, timeout=180)
                 return jsonify(cood=200, msg='短信发送成功')
         print("error: ret.code=%s, msg=%s" % (ret["code"], ret["msg"]))
         return jsonify(cood=400, msg='短信发送失败')
