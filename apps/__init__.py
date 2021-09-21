@@ -13,7 +13,7 @@ config = {
 
 def create_app():
     app = Flask(__name__, template_folder='../templates', static_folder='../static')
-    app.config.from_object(settings.DevelopmentConfig)
+    app.config.from_object(settings.ProductionConfig)
     # 注册蓝图
     app.register_blueprint(user_bp1)
     app.register_blueprint(article_bp1)
@@ -21,6 +21,8 @@ def create_app():
     db.init_app(app)
     # 初始化Bootstrap
     bootstrap.init_app(app)
-    # 初始化缓存文件
-    cache.init_app(app=app, config=config)
+    # 初始化缓存文件 通过上述config配置
+    # cache.init_app(app=app, config=config)
+    # 直接加载
+    cache.init_app(app=app)
     return app

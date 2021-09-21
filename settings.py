@@ -19,6 +19,10 @@ class Config:
     # 相册的上传目录
     UPLOAD_PHOTO_DIR = os.path.join(STATIC_DIR, 'upload/photo')
 
+    CACHE_TYPE = 'redis'
+    CACHE_REDIS_HOST = '39.107.138.229'
+    CACHE_REDIS_PORT = 6379
+
 
 class DevelopmentConfig(Config):
     ENV = 'development'

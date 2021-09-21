@@ -64,6 +64,7 @@ def content_decode(content):
 # @cache.cached(timeout=5)
 # 首页
 @user_bp1.route('/')
+@cache.cached(timeout=50)
 def index():
     # 获取cookie 通过request对象获取
     # uid = request.cookies.get('uid', None)
