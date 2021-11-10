@@ -1,2 +1,2 @@
-# blog
-练习
+# flaskblog
+项目
