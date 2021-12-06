@@ -43,8 +43,8 @@ def util_sendmsg(mobile):
 
 
 def upload_qiniu(filestorage):
-    access_key = 'dj_L1cKqSBBKftMLyVUuXnlDwnkeZmZFtfVwIBKm'
-    secret_key = 'rRdqBiMmyXMu-MTUBnavP385NX5nu5NOpc1wAAmr'
+    access_key = ' '
+    secret_key = ' '
 
     # 构建鉴权对象
     q = Auth(access_key, secret_key)
@@ -79,8 +79,8 @@ def upload_qiniu(filestorage):
 
 
 def del_qiniu(PhotoFile):
-    access_key = 'dj_L1cKqSBBKftMLyVUuXnlDwnkeZmZFtfVwIBKm'
-    secret_key = 'rRdqBiMmyXMu-MTUBnavP385NX5nu5NOpc1wAAmr'
+    access_key = ' '
+    secret_key = ' '
 
     # 构建鉴权对象
     q = Auth(access_key, secret_key)
